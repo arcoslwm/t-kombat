@@ -6,7 +6,8 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { KombatService } from './kombat/kombat.service';
-import { CreateKombatDto } from './dto/create-kombat.dto';
+import { CreateKombatDto } from './dto/request/create-kombat.dto';
+import { KombatResponseDto } from './dto/response/kombat-response.dto';
 
 @Controller('talana-kombat')
 export class JrpgController {
@@ -14,11 +15,10 @@ export class JrpgController {
 
   @Post()
   @UsePipes(new ValidationPipe())
-  kombat(@Body() createKombatDto: CreateKombatDto) {
-    console.debug('req:', createKombatDto);
-    console.debug('s:', createKombatDto.constructor.name);
-    // console.debug('player2', player2);
-
-    return this.kombatService.createKombat(createKombatDto);
+  kombat(@Body() createKombatDto: CreateKombatDto): KombatResponseDto {
+    this.kombatService.checkKombat(createKombatDto);
+    this.kombatService.createKombat(createKombatDto);
+    const kombatRes = this.kombatService.confrontToTheDeath();
+    return kombatRes;
   }
 }
