@@ -41,33 +41,24 @@ $ npm run start
 # watch mode
 $ npm run start:dev
 
-# production mode
-$ npm run start:prod
+# con Docker
+```bash
+$ docker build -t tln-kombat .
 ```
-
-## Test
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+$ docker run -p3000:3000 n-tln-kombat
 ```
 
-## Support
+## descripcion solución
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+se modela en nestjs un modulo principal  llamado jrpg (japan rol player game) el cual tiene un controlador que recibirá vía post la data de un kombate.
+será procesado el request por el service kombat 
+tiene modelos figher, especial hit
 
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+## TO-DO
+- documentar api
+- incluir tests
+- agregar persistencia principalmente de acciones de personajes y registro de peleas quizá
+- si se agrega persistencia, agregar docker compose para manejar containers separados. 
+- incluir logger service
