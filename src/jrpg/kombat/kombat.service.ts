@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateKombatDto } from '../dto/request/create-kombat.dto';
-import { Fighter } from './fighter.model';
+import { Fighter } from './domain/fighter.model';
 import { KombatResponseDto } from '../dto/response/kombat-response.dto';
 
 @Injectable()
