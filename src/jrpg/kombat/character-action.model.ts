@@ -24,7 +24,7 @@ export class CharacterAction extends Action {
   }
 
   /**
-   * comprueba si el action recibido es characterAction
+   * comprueba si el action recibido corresponde al action actual
    *
    * @param   {Action}   act  [act description]
    *
@@ -32,5 +32,12 @@ export class CharacterAction extends Action {
    */
   public checkAction(act: Action): boolean {
     return act.toString() === this.toString();
+  }
+
+  /**
+   * Retorna un string con la descripcion de la accion.
+   */
+  public history(): string {
+    return `${this.name}(${this.energy})`;
   }
 }

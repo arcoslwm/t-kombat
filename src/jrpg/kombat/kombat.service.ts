@@ -8,6 +8,7 @@ export class KombatService {
   private attackingFighter: Fighter;
   private attackedFighter: Fighter;
   private hasWinner: boolean = false;
+  private kombatHistory: string[] = [];
 
   /**
    * Inicializa personajes de la pelea con las acciones que realizaran a lo largo del kombate
@@ -43,70 +44,37 @@ export class KombatService {
   }
 
   /**
-   * retorna el resultado del kombate y el 'relato' del
+   * retorna el resultado del kombate y el 'relato'
    * ejecuta una a una las acciones de cada peleador hasta el termino del kombate
    */
   confrontToTheDeath(): KombatResponseDto {
-    /**
-     * relato del kombate
-     */
-    const kombatHistory: string[] = [];
-
-    while (this.attackingFighter.hasMoreActions() || this.attackedFighter.hasMoreActions()) {
-
+    this.kombatHistory = [];
+    while (
+      this.attackingFighter.hasMoreActions() ||
+      this.attackedFighter.hasMoreActions()
+    ) {
       const atackResult = this.attackingFighter.attack();
       this.attackedFighter.updateEnergy(atackResult.energy);
 
-      kombatHistory.push(
-        `${this.attackingFighter.name} ${atackResult.historyLine} y a ${this.attackedFighter.name} le queda ${this.attackedFighter.energy} de energia`
+      this.kombatHistory.push(
+        //setea relato de la accion en el kombate
+        `${this.attackingFighter.name} ${
+          atackResult.historyLine
+        } y ${this.attackedFighter.historyEnergy()}`,
       );
 
       if (this.attackedFighter.energy === 0) {
         this.hasWinner = true;
-        kombatHistory.push(`El pobre ${this.attackedFighter.name} se ha quedado sin energia`);
+        // kombatHistory.push(`${this.attackedFighter.historyEnergy()}`);
         break;
       }
 
       this.swapPlayerTurn();
     }
 
-    let resultString = '';
-    if (this.hasWinner) {
-      kombatHistory.push(
-        `${this.attackingFighter.name} gana el Kombate y aún le queda ${this.attackingFighter.energy} de Energia`
-      );
-      resultString = `${this.attackingFighter.name} gana el Kombate`;
-    } else {
-      //ningun peleador con energia en 0
-      const attackingEnergy = this.attackingFighter.energy;
-      const attackedEnergy = this.attackedFighter.energy;
-      const finishString = 'Termina la pelea ';
-
-      if (attackingEnergy === attackedEnergy) {
-
-        kombatHistory.push(
-          `${finishString}en un empate ambos peleadores con ${attackingEnergy}  de Energia`
-        );
-        resultString = 'Empate entre los peladores';
-
-      } else if (attackingEnergy > attackedEnergy) {
-
-        kombatHistory.push(
-          `${finishString}${this.attackingFighter.name} gana el Kombate  y aún le queda ${attackingEnergy} de Energia y a ${this.attackedFighter.name} le queda ${attackedEnergy} `,
-        );
-        resultString = `${this.attackingFighter.name} gana el Kombate`;
-        
-      } else {
-
-        kombatHistory.push(
-          `${finishString}${this.attackedFighter.name} gana el Kombate y aún le queda ${attackedEnergy} de Energia y a ${this.attackingFighter.name} le queda ${attackingEnergy} `,
-        );
-        resultString = `${this.attackedFighter.name} gana el Kombate`;
-      }
-    }
     return {
-      result: resultString,
-      kombatHistory: kombatHistory,
+      result: this.historyFinal(),
+      kombatHistory: this.kombatHistory,
       fighters: [
         {
           player: this.attackingFighter.player,
@@ -127,6 +95,45 @@ export class KombatService {
    */
   private swapPlayerTurn(): void {
     [this.attackingFighter, this.attackedFighter] = [this.attackedFighter, this.attackingFighter];
+  }
+
+  /**
+   * setea el cierre del kombate con una ultima cadena en: kombatHistory
+   * y retorna el string que  se responde como resultado final del kombate
+   * 
+   */
+  private historyFinal(): string {
+    let resultString = '';
+    if (this.hasWinner) {
+      this.kombatHistory.push(
+        `${this.attackingFighter.name} gana el Kombate y aún le queda ${this.attackingFighter.energy} de Energia`
+      );
+      resultString = `${this.attackingFighter.name} gana el Kombate`;
+    } else {
+      //ningun peleador con energia en 0
+      const attackingEnergy = this.attackingFighter.energy;
+      const attackedEnergy = this.attackedFighter.energy;
+      const finishString = 'Termina la pelea ';
+
+      if (attackingEnergy === attackedEnergy) {
+
+        this.kombatHistory.push(
+          `${finishString}en un empate ambos peleadores con ${attackingEnergy} de Energia`
+        );
+        resultString = 'Empate entre los peladores';
+      } else if (attackingEnergy > attackedEnergy) {
+        this.kombatHistory.push(
+          `${finishString}${this.attackingFighter.name} gana el Kombate  y aún le queda ${attackingEnergy} de Energia y a ${this.attackedFighter.name} le queda ${attackedEnergy} `,
+        );
+        resultString = `${this.attackingFighter.name} gana el Kombate`;
+      } else {
+        this.kombatHistory.push(
+          `${finishString}${this.attackedFighter.name} gana el Kombate y aún le queda ${attackedEnergy} de Energia y a ${this.attackingFighter.name} le queda ${attackingEnergy} `,
+        );
+        resultString = `${this.attackedFighter.name} gana el Kombate`;
+      }
+    }
+    return resultString;
   }
 
   /**
