@@ -1,35 +1,19 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Requisitos 
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- node>=v16 && npm >=8.19 o Docker >= 24 instalados
+- json valido respecto la estructura del enunciado.
 
 ## Installation
 
 ```bash
 $ npm install
+
+
+
+# Docker build
+$ docker build -t tln-kombat .
+
 ```
 
 ## Running the app
@@ -41,24 +25,67 @@ $ npm run start
 # watch mode
 $ npm run start:dev
 
-# con Docker
-```bash
-$ docker build -t tln-kombat .
+# Docker run
+$ docker run -p3000:3000 tln-kombat
 ```
 
+
+# USO (ejemplo con cURL)
+
 ```bash
-$ docker run -p3000:3000 n-tln-kombat
+$ curl --location 'http://localhost:3000/talana-kombat' \
+--header 'Content-Type: application/json' \
+--data '{
+    "player1": {
+        "movimientos": [
+            "D",
+            "DSD",
+            "S",
+            "DSD",
+            "SD"
+        ],
+        "golpes": [
+            "K",
+            "P",
+            "",
+            "K",
+            "P"
+        ]
+    },
+    "player2": {
+        "movimientos": [
+            "SA",
+            "SA",
+            "SA",
+            "ASA",
+            "SA"
+        ],
+        "golpes": [
+            "K",
+            "",
+            "K",
+            "P",
+            "P"
+        ]
+    }
+}'
 ```
 
 ## descripcion solución
 
-se modela en nestjs un modulo principal  llamado jrpg (japan rol player game) el cual tiene un controlador que recibirá vía post la data de un kombate.
-será procesado el request por el service kombat 
-tiene modelos figher, especial hit
+se modela en nestjs un modulo principal  llamado jrpg (japan rol player game) el cual tiene un controlador que recibe vía post la data de un kombate.
+se procesa el request por kombatService el cual se vale de las clases de dominio Fighter, Action, CharacterAction, AttackResult para responder el resultado de un kombate
+
+
+## asumisiones
+
+- la validación de los datos de entrada es case sensitive y solo son aceptados movimientos y golpes en mayuscula (W S A D) (P y K).
+- se declara ganador de le pelea a aquel peleador que tiene más energía una vez terminados todos los movimientos si es que ninguno llega a cero energia
+
 
 ## TO-DO
-- documentar api
-- incluir tests
+- Documentar api (con swagger por ejemplo)
+- aumentar coverage en tests  (extender a controlador)
 - agregar persistencia principalmente de acciones de personajes y registro de peleas quizá
 - si se agrega persistencia, agregar docker compose para manejar containers separados. 
 - incluir logger service
