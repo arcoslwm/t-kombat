@@ -5,15 +5,28 @@ import { KombatResponseDto } from '../dto/response/kombat-response.dto';
 
 @Injectable()
 export class KombatService {
-  private attackingFighter: Fighter;
-  private attackedFighter: Fighter;
+  private _attackingFighter: Fighter;
+  private _attackedFighter: Fighter;
   private hasWinner: boolean = false;
   private kombatHistory: string[] = [];
+
+  public get attackedFighter(): Fighter {
+    return this._attackedFighter;
+  }
+  public set attackedFighter(value: Fighter) {
+    this._attackedFighter = value;
+  }
+  
+  public get attackingFighter(): Fighter {
+    return this._attackingFighter;
+  }
+  public set attackingFighter(value: Fighter) {
+    this._attackingFighter = value;
+  }
 
   /**
    * Inicializa personajes de la pelea con las acciones que realizaran a lo largo del kombate
    * setea las acciones especiales que tendrá cada uno
-   *
    *
    * @param   {CreateKombatDto}  createKombatDto  [createKombatDto description]
    */
@@ -47,7 +60,10 @@ export class KombatService {
    * retorna el resultado del kombate y el 'relato'
    * ejecuta una a una las acciones de cada peleador hasta el termino del kombate
    */
-  confrontToTheDeath(): KombatResponseDto {
+  confrontToTheDeath(createKombatDto: CreateKombatDto): KombatResponseDto {
+    this.checkKombat(createKombatDto);
+    this.createKombat(createKombatDto);
+
     this.kombatHistory = [];
     while (
       this.attackingFighter.hasMoreActions() ||
@@ -149,7 +165,6 @@ export class KombatService {
       if (
         createKombatDto[playerKey].golpes.length !== createKombatDto[playerKey].movimientos.length
       ) {
-        console.debug('exception');
         throw new BadRequestException(
           `El número de golpes y movimientos no coinciden para el ${playerKey}`,
         );

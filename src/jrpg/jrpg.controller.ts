@@ -16,9 +16,7 @@ export class JrpgController {
   @Post()
   @UsePipes(new ValidationPipe())
   kombat(@Body() createKombatDto: CreateKombatDto): KombatResponseDto {
-    this.kombatService.checkKombat(createKombatDto);
-    this.kombatService.createKombat(createKombatDto);
-    const kombatRes = this.kombatService.confrontToTheDeath();
+    const kombatRes = this.kombatService.confrontToTheDeath(createKombatDto);
     return kombatRes;
   }
 }
